@@ -13,7 +13,7 @@ body { font-family: 'Arial', sans-serif; margin: 20px; background-color: #d0f0fd
 h1 { color: #006064; text-align: center; margin-bottom: 10px; }
 p.instructions { text-align: center; font-size: 0.95em; color: #333; margin-bottom: 30px; }
 legend { color: #00796b; font-size: 1.2em; margin-bottom: 10px; }
-label { display: block; margin-bottom: 8px; color: #555; transition: color 0.3s ease; }
+label { display: block; margin-bottom: 8px; color: #555; }
 .score { margin-top: 10px; font-weight: bold; color: #007BFF; }
 button { padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; display: block; margin: 20px auto; }
 button:hover { background-color: #004d40; }
@@ -102,7 +102,7 @@ Object.keys(categoriesData).forEach(cat => {
   card.className = 'card';
   let html = `<fieldset><legend>${cat}</legend>`;
   categoriesData[cat].forEach(q => {
-    html += `<label data-question="${q}">${q}
+    html += `<label>${q}
       <select name="${cat}" data-category="${cat}">
         <option value="0">0</option>
         <option value="1">1</option>
@@ -149,25 +149,6 @@ form.addEventListener('change', () => {
     selects.forEach(sel => {
       const value = parseInt(sel.value);
       score += value;
-
-      const label = sel.parentElement;
-      const questionText = label.getAttribute('data-question');
-
-      // coloration spécifique
-      if (questionText === "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?" ||
-          questionText === "Combien de fois par semaine mangez-vous des oléagineux (noisettes, amandes, noix de cajou, etc.) ?" ||
-          questionText === "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?") {
-        label.style.color = (value === 0 || value === 1) ? 'red' : '#555';
-      }
-
-      if (questionText === "Combien de fois par semaine mangez-vous des fruits ?" ||
-          questionText === "Combien de fois par semaine mangez-vous des crudites ?") {
-        label.style.color = (value === 0 || value === 1 || value === 2) ? 'red' : '#555';
-      }
-
-      if (questionText === "Combien de fois par semaine consommez-vous du pain blanc (baguette, pain de mie) ?") {
-        label.style.color = (value === 6) ? 'red' : '#555';
-      }
     });
     document.getElementById(`score${cat}`).textContent = score;
     total += score;
@@ -184,7 +165,7 @@ form.addEventListener('submit', function(event) {
     if (selects.length > 0) {
       summary += `\nCatégorie ${cat} :\n`;
       selects.forEach(sel => {
-        const label = sel.parentElement.getAttribute('data-question');
+        const label = sel.parentElement.textContent.trim();
         if (sel.value !== "0") {
           summary += `- ${label} (Score: ${sel.value})\n`;
         }
