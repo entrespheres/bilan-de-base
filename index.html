@@ -1,178 +1,202 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Évaluation Nutritionnelle</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        #resultat {
-            margin-top: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        ul {
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-        }
-        .questionnaire {
-            margin-top: 30px;
-        }
-        .question {
-            margin-bottom: 15px;
-        }
-        label {
-            font-weight: bold;
-        }
-        input {
-            margin-top: 5px;
-            display: block;
-            padding: 8px;
-            width: 100%;
-            max-width: 400px;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionnaire Alimentation Complémentaire</title>
+<style>
+body { font-family: 'Arial', sans-serif; margin: 20px; background-color: #d0f0fd; }
+.card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border-left: 6px solid #00acc1; }
+.progress-container { width: 100%; background: #e0f2f1; border-radius: 10px; overflow: hidden; margin-bottom: 20px; height: 20px; }
+.progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #00acc1, #00796b); transition: width 0.4s ease; }
+.progress-text { text-align: center; font-weight: bold; margin-bottom: 20px; color: #006064; }
+h1 { color: #006064; text-align: center; margin-bottom: 10px; }
+p.instructions { text-align: center; font-size: 0.95em; color: #333; margin-bottom: 30px; }
+legend { color: #00796b; font-size: 1.2em; margin-bottom: 10px; }
+label { display: block; margin-bottom: 8px; color: #555; }
+.score { margin-top: 10px; font-weight: bold; color: #007BFF; }
+button { padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; display: block; margin: 20px auto; }
+button:hover { background-color: #004d40; }
+input[type="email"] { padding: 8px; width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 8px; margin-top: 10px; }
+ul { padding-left: 20px; }
+li { margin-bottom: 8px; }
+@media (max-width: 600px) {
+  body { margin: 10px; font-size: 16px; }
+  .card { padding: 15px; border-left: 4px solid #00acc1; }
+  h1 { font-size: 1.6em; }
+  legend { font-size: 1.2em; }
+  label { font-size: 1em; }
+  select, input[type="email"] { width: 100%; font-size: 16px; padding: 12px; margin-top: 8px; }
+  button { width: 100%; font-size: 18px; padding: 14px; }
+  .progress-container { height: 18px; }
+  .progress-text { font-size: 1em; margin-bottom: 15px; }
+}
+</style>
 </head>
+
 <body>
 
-    <h1>Résultats de votre Bilan Nutritionnel</h1>
+<h1>Questionnaire Alimentation Complémentaire</h1>
+<p class="instructions">
+  <strong>Instructions :</strong><br>
+  0 = jamais<br>1 = 1 à 2 fois par semaine<br>2 = 2 à 3 fois par semaine<br>3 = 3 à 4 fois par semaine<br>4 = plus de 5 fois par semaine<br>5 = presque à chaque repas
+</p>
 
-    <div class="questionnaire" id="questionnaire">
-        <div class="question">
-            <label for="poissons">Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ? (0/1/2+ fois par semaine)</label>
-            <input type="number" id="poissons" min="0" max="7">
-        </div>
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+<div class="progress-text" id="progressText">0% complété</div>
 
-        <div class="question">
-            <label for="fruits">Combien de fois par semaine mangez-vous des fruits ?</label>
-            <input type="number" id="fruits" min="0" max="21">
-        </div>
+<form id="dietForm" action="https://formspree.io/f/xblolblj" method="POST">
+  <input type="hidden" name="Résumé" id="summaryField">
+  <div id="categories"></div>
 
-        <div class="question">
-            <label for="huile">Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?</label>
-            <input type="number" id="huile" min="0" max="21">
-        </div>
+  <div class="card">
+    <div class="score">Score Total : <span id="scoreTotal">0</span></div>
+  </div>
 
-        <!-- Ajout d'autres questions ici si besoin -->
-        <!-- Exemple de nouvelles questions -->
-        <div class="question">
-            <label for="legumes">Combien de portions de légumes mangez-vous par jour ?</label>
-            <input type="number" id="legumes" min="0" max="10">
-        </div>
+  <div class="card" id="carencesDetectees">
+    <!-- Carences détectées seront affichées ici -->
+  </div>
 
-        <div class="question">
-            <label for="viande">Consommez-vous de la viande rouge par semaine ? (0 = non, 1 = oui)</label>
-            <input type="number" id="viande" min="0" max="7">
-        </div>
+  <div class="card">
+    <label for="email">Votre email :</label>
+    <input type="email" id="email" name="email" required>
+    <button type="submit">Envoyer mes réponses</button>
+  </div>
+</form>
 
-        <div class="question">
-            <label for="cereales">Consommez-vous des céréales complètes chaque jour ? (0 = non, 1 = oui)</label>
-            <input type="number" id="cereales" min="0" max="1">
-        </div>
+<script>
+// Données des questions
+const categoriesData = {
+  'Alimentation': [
+    "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
+    "Combien de fois par semaine mangez-vous des fruits ?",
+    "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?",
+    "Combien de fois par semaine consommez-vous du lait de vache ?",
+    "Combien de fois par semaine consommez-vous du pain blanc (baguette, pain de mie) ?",
+    "Combien de fois par semaine mangez-vous des féculents (pâtes, riz, pomme de terre,...) ?",
+    "Combien de fois par semaine mangez-vous des crudites ?",
+    "Combien de fois par semaine mangez-vous des oléagineux (noisettes, amandes, noix de cajou, etc.) ?",
+    "Combien de fois mangez-vous de la viande rouge ou porcine par semaine ?",
+    "Combien de fois mangez-vous de la volaille par semaine (poulet, dinde,...) ?",
+    "Combien de fois mangez-vous du poisson par semaine ?",
+    "Combien de fois mangez-vous des œufs par semaine ?",
+    "Combien de fois par semaine consommez-vous des légumineuses (lentilles, pois, haricots blancs,...) ?",
+    "Combien de fois par semaine consommez-vous des pâtisseries (gâteaux, sucreries, barres chocolatées,...) ?",
+    "Combien de fois par semaine consommez-vous des viennoiseries (croissants, pains au chocolat,...) ?",
+    "Combien de fois mangez-vous des plats cuisinés par semaine ?",
+    "Combien de fois êtes-vous exposé(e) à plus de 30 min en continu à l'extérieur ?"
+  ],
+  'Boissons': [
+    "Quelle quantité de verres d'eau buvez-vous en moyenne par jour ?",
+    "Quelle quantité de tasses de café buvez-vous en moyenne par jour ?",
+    "Quelle quantité de tasses de thé buvez-vous en moyenne par jour ?",
+    "Quelle quantité de jus de fruits buvez-vous en moyenne par jour ?",
+    "Quelle quantité de verres de soda buvez-vous en moyenne par jour ?",
+    "Quelle quantité de verres d'alcool buvez-vous en moyenne par jour ?"
+  ]
+};
 
-        <button onclick="analyserBilan()">Analyser mon Bilan</button>
-    </div>
+// Générer le formulaire
+const form = document.getElementById('dietForm');
+const container = document.getElementById('categories');
+Object.keys(categoriesData).forEach(cat => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  let html = `<fieldset><legend>${cat}</legend>`;
+  categoriesData[cat].forEach(q => {
+    html += `<label>${q}
+      <select name="${q}" data-category="${cat}">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </label>`;
+  });
+  html += `</fieldset>`;
+  card.innerHTML = html;
+  container.appendChild(card);
+});
 
-    <div id="resultat"></div>
+// Mise à jour de la progression et score
+form.addEventListener('change', updateForm);
+function updateForm() {
+  const selects = form.querySelectorAll('select');
+  let total = 0;
+  let answered = 0;
+  selects.forEach(sel => {
+    total += parseInt(sel.value);
+    if (sel.value !== "0") answered++;
+  });
+  document.getElementById('scoreTotal').textContent = total;
+  const percentage = Math.round((answered / selects.length) * 100);
+  document.getElementById('progressBar').style.width = percentage + '%';
+  document.getElementById('progressText').textContent = percentage + '% complété';
+  updateCarences();
+}
 
-    <script>
-        function calculerScoreTotal(reponses) {
-            // Addition simple pour exemple
-            let score = 0;
-            for (let question in reponses) {
-                score += parseInt(reponses[question]) || 0;
-            }
-            return score;
+// Définir les règles de carence
+const reglesCarences = [
+  {
+    question: "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
+    valeursDeclenchantes: [0],
+    message: "Carence en EPA/DHA"
+  },
+  {
+    question: "Combien de fois par semaine mangez-vous des fruits ?",
+    valeursDeclenchantes: [0, 1],
+    message: "Carence en manganèse"
+  },
+  {
+    question: "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?",
+    valeursDeclenchantes: [0, 1],
+    message: "Carence en Omega 3"
+  }
+];
+
+// Mise à jour des carences détectées
+function updateCarences() {
+  const carences = [];
+  reglesCarences.forEach(regle => {
+    const select = document.querySelector(`select[name="${regle.question}"]`);
+    if (select && regle.valeursDeclenchantes.includes(parseInt(select.value))) {
+      carences.push(regle.message);
+    }
+  });
+  const carenceDiv = document.getElementById('carencesDetectees');
+  if (carences.length > 0) {
+    carenceDiv.innerHTML = `<h3>Carences détectées :</h3><ul>${carences.map(c => `<li>${c}</li>`).join('')}</ul>`;
+  } else {
+    carenceDiv.innerHTML = `<h3>Aucune carence détectée</h3>`;
+  }
+}
+
+// Préparer résumé avant envoi
+form.addEventListener('submit', function(event) {
+  let summary = '';
+  Object.keys(categoriesData).forEach(cat => {
+    const selects = form.querySelectorAll(`select[data-category="${cat}"]`);
+    if (selects.length > 0) {
+      summary += `\nCatégorie ${cat} :\n`;
+      selects.forEach(sel => {
+        const label = sel.parentElement.textContent.trim();
+        if (sel.value !== "0") {
+          summary += `- ${label} (Score: ${sel.value})\n`;
         }
-
-        function getReponses() {
-            return {
-                "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?": parseInt(document.getElementById("poissons").value) || 0,
-                "Combien de fois par semaine mangez-vous des fruits ?": parseInt(document.getElementById("fruits").value) || 0,
-                "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?": parseInt(document.getElementById("huile").value) || 0,
-                "Combien de portions de légumes mangez-vous par jour ?": parseInt(document.getElementById("legumes").value) || 0,
-                "Consommez-vous de la viande rouge par semaine ?": parseInt(document.getElementById("viande").value) || 0,
-                "Consommez-vous des céréales complètes chaque jour ?": parseInt(document.getElementById("cereales").value) || 0
-            };
-        }
-
-        function verifierCarences(reponses, regles) {
-            let carencesDetectees = [];
-
-            regles.forEach(regle => {
-                const reponse = reponses[regle.question];
-                if (regle.valeursDeclenchantes.includes(reponse)) {
-                    carencesDetectees.push(regle.message);
-                }
-            });
-
-            return carencesDetectees;
-        }
-
-        function analyserBilan() {
-            const resultatElement = document.getElementById("resultat");
-            const reponses = getReponses();
-            const scoreTotal = calculerScoreTotal(reponses);
-
-            resultatElement.innerHTML = `<h2>Score total : ${scoreTotal}</h2>`;
-
-            const reglesCarences = [
-                {
-                    question: "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
-                    valeursDeclenchantes: [0],
-                    message: "Carence en EPA/DHA"
-                },
-                {
-                    question: "Combien de fois par semaine mangez-vous des fruits ?",
-                    valeursDeclenchantes: [0, 1],
-                    message: "Carence en manganèse"
-                },
-                {
-                    question: "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?",
-                    valeursDeclenchantes: [0, 1],
-                    message: "Carence en Omega 3"
-                }
-                // Tu peux rajouter ici d'autres règles de carences facilement
-            ];
-
-            const carences = verifierCarences(reponses, reglesCarences);
-
-            if (carences.length > 0) {
-                let listeHTML = "<h3>Carences détectées :</h3><ul>";
-                carences.forEach(message => {
-                    listeHTML += `<li>${message}</li>`;
-                });
-                listeHTML += "</ul>";
-                resultatElement.innerHTML += listeHTML;
-            } else {
-                resultatElement.innerHTML += "<p>Aucune carence détectée.</p>";
-            }
-        }
-    </script>
+      });
+    }
+  });
+  const carences = document.getElementById('carencesDetectees').innerText;
+  const scoreTotal = document.getElementById('scoreTotal').textContent;
+  summary += `\nScore total : ${scoreTotal}\n\n${carences}`;
+  document.getElementById('summaryField').value = summary;
+  alert('Merci pour votre envoi !');
+});
+</script>
 
 </body>
 </html>
