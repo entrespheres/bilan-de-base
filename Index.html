@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Questionnaire alimentaire</title>
+<title>Questionnaire Alimentation Complémentaire</title>
 <style>
 body { font-family: 'Arial', sans-serif; margin: 20px; background-color: #d0f0fd; }
 .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border-left: 6px solid #00acc1; }
@@ -21,10 +21,9 @@ input[type="email"] { padding: 8px; width: 100%; max-width: 400px; border: 1px s
 @media (max-width: 600px) { body { margin: 10px; } .card { padding: 15px; border-left: 4px solid #00acc1; } h1 { font-size: 1.5em; } legend { font-size: 1em; } button { width: 100%; font-size: 14px; } }
 </style>
 </head>
-
 <body>
 
-<h1>Questionnaire alimentaire</h1>
+<h1>Questionnaire Alimentation Complémentaire</h1>
 <p class="instructions">
   <strong>Instructions :</strong><br>
   0 = jamais<br>1 = 1 à 2 fois par semaine<br>2 = 2 à 3 fois par semaine<br>3 = 3 à 4 fois par semaine<br>5 = plus de 5 fois par semaine<br>6 = presque à chaque repas
@@ -152,13 +151,6 @@ form.addEventListener('change', () => {
           label.style.color = '#555';
         }
       }
-      if (questionText.includes("exposé(e) à plus de 30 min en continu à l'extérieur")) {
-        if (value >= 0 && value <= 4) {
-          label.style.color = 'red';
-        } else {
-          label.style.color = '#555';
-        }
-      }
     });
     document.getElementById(`score${cat}`).textContent = score;
     total += score;
@@ -175,7 +167,7 @@ form.addEventListener('submit', function(event) {
       summary += `\nCatégorie ${cat} :\n`;
       selects.forEach(sel => {
         const label = sel.parentElement.textContent.trim();
-        if (sel.value !== "0") {
+        if(sel.value !== "0"){
           summary += `- ${label} (Score: ${sel.value})\n`;
         }
       });
