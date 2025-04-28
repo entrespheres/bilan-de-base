@@ -174,10 +174,21 @@ function updateCarences() {
   const carences = [];
   reglesCarences.forEach(regle => {
     const select = document.querySelector(`select[name="${regle.question}"]`);
-    if (select && regle.valeursDeclenchantes.includes(parseInt(select.value))) {
-      carences.push(regle.message);
+    if (select) {
+      const valeur = parseInt(select.value);
+      if (regle.valeursDeclenchantes.includes(valeur)) {
+        // Cas spécial pour légumes cuits
+        if (regle.question === "Combien de fois par semaine mangez-vous des légumes cuits ?") {
+          if (valeur === 0 || valeur === 1) {
+            carences.push(regle.message);
+          }
+        } else {
+          carences.push(regle.message);
+        }
+      }
     }
   });
+
   const carenceDiv = document.getElementById('carencesDetectees');
   if (carences.length > 0) {
     carenceDiv.innerHTML = `<h3>Carences détectées :</h3><ul>${carences.map(c => `<li>${c}</li>`).join('')}</ul>`;
@@ -185,6 +196,7 @@ function updateCarences() {
     carenceDiv.innerHTML = `<h3>Aucune carence détectée</h3>`;
   }
 }
+
 
 // Préparer résumé avant envoi
 form.addEventListener('submit', function(event) {
