@@ -18,9 +18,21 @@ label { display: block; margin-bottom: 8px; color: #555; transition: color 0.3s 
 button { padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; display: block; margin: 20px auto; }
 button:hover { background-color: #004d40; }
 input[type="email"] { padding: 8px; width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 8px; margin-top: 10px; }
-@media (max-width: 600px) { body { margin: 10px; } .card { padding: 15px; border-left: 4px solid #00acc1; } h1 { font-size: 1.5em; } legend { font-size: 1em; } button { width: 100%; font-size: 14px; } }
+
+@media (max-width: 600px) {
+  body { margin: 10px; font-size: 16px; }
+  .card { padding: 15px; border-left: 4px solid #00acc1; }
+  h1 { font-size: 1.6em; }
+  legend { font-size: 1.2em; }
+  label { font-size: 1em; }
+  select, input[type="email"] { width: 100%; font-size: 16px; padding: 12px; margin-top: 8px; }
+  button { width: 100%; font-size: 18px; padding: 14px; }
+  .progress-container { height: 18px; }
+  .progress-text { font-size: 1em; margin-bottom: 15px; }
+}
 </style>
 </head>
+
 <body>
 
 <h1>Questionnaire Alimentation Complémentaire</h1>
@@ -50,6 +62,7 @@ input[type="email"] { padding: 8px; width: 100%; max-width: 400px; border: 1px s
 </form>
 
 <script>
+// données du questionnaire
 const categoriesData = {
   'Alimentation': [
     "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
@@ -80,6 +93,7 @@ const categoriesData = {
   ]
 };
 
+// génération dynamique des questions
 const form = document.getElementById('dietForm');
 const container = document.getElementById('categories');
 
@@ -88,9 +102,15 @@ Object.keys(categoriesData).forEach(cat => {
   card.className = 'card';
   let html = `<fieldset><legend>${cat}</legend>`;
   categoriesData[cat].forEach(q => {
-    html += `<label>${q}
+    html += `<label data-question="${q}">${q}
       <select name="${cat}" data-category="${cat}">
-        <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
       </select>
     </label>`;
   });
@@ -99,14 +119,28 @@ Object.keys(categoriesData).forEach(cat => {
   container.appendChild(card);
 });
 
+// mise à jour de la barre de progression
 function updateProgress() {
   const selects = form.querySelectorAll('select');
   const answered = Array.from(selects).filter(sel => sel.value !== "0").length;
   const percentage = Math.round((answered / selects.length) * 100);
-  document.getElementById('progressBar').style.width = percentage + '%';
-  document.getElementById('progressText').textContent = percentage + '% complété';
+
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+
+  progressBar.style.width = percentage + '%';
+  progressText.textContent = percentage + '% complété';
+
+  if (percentage < 40) {
+    progressBar.style.background = 'linear-gradient(90deg, #e53935, #d32f2f)';
+  } else if (percentage < 80) {
+    progressBar.style.background = 'linear-gradient(90deg, #fb8c00, #f57c00)';
+  } else {
+    progressBar.style.background = 'linear-gradient(90deg, #43a047, #388e3c)';
+  }
 }
 
+// écoute des changements
 form.addEventListener('change', () => {
   let total = 0;
   Object.keys(categoriesData).forEach(cat => {
@@ -117,39 +151,22 @@ form.addEventListener('change', () => {
       score += value;
 
       const label = sel.parentElement;
-      const questionText = label.textContent.trim();
+      const questionText = label.getAttribute('data-question');
 
-      if (
-        questionText.includes("poissons gras") ||
-        questionText.includes("oléagineux (noisettes, amandes, noix de cajou") ||
-        questionText.includes("huile de Colza, Lin, Noix")
-      ) {
-        if (value === 0 || value === 1) {
-          label.style.color = 'red';
-        } else {
-          label.style.color = '#555';
-        }
+      // coloration spécifique
+      if (questionText === "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?" ||
+          questionText === "Combien de fois par semaine mangez-vous des oléagineux (noisettes, amandes, noix de cajou, etc.) ?" ||
+          questionText === "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?") {
+        label.style.color = (value === 0 || value === 1) ? 'red' : '#555';
       }
-      if (questionText.includes("pain blanc (baguette, pain de mie)")) {
-        if (value === 6) {
-          label.style.color = 'red';
-        } else {
-          label.style.color = '#555';
-        }
+
+      if (questionText === "Combien de fois par semaine mangez-vous des fruits ?" ||
+          questionText === "Combien de fois par semaine mangez-vous des crudites ?") {
+        label.style.color = (value === 0 || value === 1 || value === 2) ? 'red' : '#555';
       }
-      if (questionText.includes("mangez-vous des fruits")) {
-        if (value === 0 || value === 1 || value === 2) {
-          label.style.color = 'red';
-        } else {
-          label.style.color = '#555';
-        }
-      }
-      if (questionText.includes("mangez-vous des crudites")) {
-        if (value === 0 || value === 1 || value === 2) {
-          label.style.color = 'red';
-        } else {
-          label.style.color = '#555';
-        }
+
+      if (questionText === "Combien de fois par semaine consommez-vous du pain blanc (baguette, pain de mie) ?") {
+        label.style.color = (value === 6) ? 'red' : '#555';
       }
     });
     document.getElementById(`score${cat}`).textContent = score;
@@ -159,6 +176,7 @@ form.addEventListener('change', () => {
   updateProgress();
 });
 
+// création du résumé pour l'envoi
 form.addEventListener('submit', function(event) {
   let summary = '';
   Object.keys(categoriesData).forEach(cat => {
@@ -166,8 +184,8 @@ form.addEventListener('submit', function(event) {
     if (selects.length > 0) {
       summary += `\nCatégorie ${cat} :\n`;
       selects.forEach(sel => {
-        const label = sel.parentElement.textContent.trim();
-        if(sel.value !== "0"){
+        const label = sel.parentElement.getAttribute('data-question');
+        if (sel.value !== "0") {
           summary += `- ${label} (Score: ${sel.value})\n`;
         }
       });
