@@ -139,7 +139,7 @@ function updateForm() {
   updateCarences();
 }
 
-// Définir les règles de carence
+// Définir les règles de carence (corrigées)
 const reglesCarences = [
   {
     question: "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
@@ -147,14 +147,9 @@ const reglesCarences = [
     message: "Carence en EPA/DHA"
   },
   {
-    question: "Combien de fois par semaine mangez-vous des fruits ?",
-    valeursDeclenchantes: [0, 1],
-    message: "Carence en manganèse"
-  },
-  {
-    question: "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?",
-    valeursDeclenchantes: [0, 1],
-    message: "Carence en Omega 3"
+    question: "Combien de fois êtes-vous exposé(e) à plus de 30 min en continu à l'extérieur ?",
+    valeursDeclenchantes: [0, 1, 2],
+    message: "Carence en Vit D"
   }
 ];
 
