@@ -72,11 +72,13 @@ const categoriesData = {
   'Alimentation': [
     "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
     "Combien de fois par semaine mangez-vous des fruits ?",
+    "Combien de fois utilisez-vous de l'huile d'olive ?",
     "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?",
     "Combien de fois par semaine consommez-vous du lait de vache ?",
     "Combien de fois par semaine consommez-vous du pain blanc (baguette, pain de mie) ?",
     "Combien de fois par semaine mangez-vous des féculents (pâtes, riz, pomme de terre,...) ?",
-    "Combien de fois par semaine mangez-vous des crudites ?",
+    "Combien de fois par semaine mangez-vous des crudites ou des fruits ?",
+    "Combien de fois par semaine mangez-vous des légumes cuits ?",
     "Combien de fois par semaine mangez-vous des oléagineux (noisettes, amandes, noix de cajou, etc.) ?",
     "Combien de fois mangez-vous de la viande rouge ou porcine par semaine ?",
     "Combien de fois mangez-vous de la volaille par semaine (poulet, dinde,...) ?",
@@ -139,7 +141,7 @@ function updateForm() {
   updateCarences();
 }
 
-// Définir les règles de carence (corrigées)
+// Définir les règles de carence
 const reglesCarences = [
   {
     question: "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
