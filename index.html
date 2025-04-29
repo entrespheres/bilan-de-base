@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Questionnaire Alimentation Complémentaire</title>
   <style>
-    body { font-family: 'Arial', sans-serif; margin: 20px; background-color: #d0f0fd; }
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #d0f0fd; }
     .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border-left: 6px solid #00acc1; }
     .progress-container { width: 100%; background: #e0f2f1; border-radius: 10px; overflow: hidden; margin-bottom: 20px; height: 20px; }
     .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #00acc1, #00796b); transition: width 0.4s ease; }
@@ -35,160 +35,162 @@
 </head>
 
 <body>
-  <h1>Questionnaire Alimentation Complémentaire</h1>
-  <p class="instructions">
-    <strong>Instructions :</strong><br>
-    0 = jamais<br>1 = 1 à 2 fois par semaine<br>2 = 2 à 3 fois par semaine<br>3 = 3 à 4 fois par semaine<br>4 = plus de 5 fois par semaine<br>5 = presque à chaque repas
-  </p>
 
-  <div class="progress-container">
-    <div class="progress-bar" id="progressBar"></div>
+<h1>Questionnaire Alimentation Complémentaire</h1>
+<p class="instructions">
+  <strong>Instructions :</strong><br>
+  0 = jamais<br>1 = 1 à 2 fois par semaine<br>2 = 2 à 3 fois par semaine<br>3 = 3 à 4 fois par semaine<br>4 = plus de 5 fois par semaine<br>5 = presque à chaque repas
+</p>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+<div class="progress-text" id="progressText">0% complété</div>
+
+<form id="dietForm" action="https://formspree.io/f/xblolblj" method="POST">
+  <input type="hidden" name="Résumé" id="summaryField">
+  <div id="categories"></div>
+
+  <div class="card">
+    <div class="score">Score Total : <span id="scoreTotal">0</span></div>
   </div>
-  <div class="progress-text" id="progressText">0% complété</div>
 
-  <form id="dietForm" action="https://formspree.io/f/xblolblj" method="POST">
-    <input type="hidden" name="Résumé" id="summaryField">
-    <div id="categories"></div>
+  <div class="card" id="carencesDetectees"></div>
 
-    <div class="card">
-      <div class="score">Score Total : <span id="scoreTotal">0</span></div>
-    </div>
+  <div class="card">
+    <label for="email">Votre email :</label>
+    <input type="email" id="email" name="email" required>
+    <button type="submit">Envoyer mes réponses</button>
+  </div>
+</form>
 
-    <div class="card" id="carencesDetectees"></div>
+<script>
+const categoriesData = {
+  'Alimentation': [
+    "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
+    "Combien de fois utilisez-vous de l'huile d'olive ?",
+    "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?",
+    "Combien de fois par semaine consommez-vous du lait de vache ?",
+    "Combien de fois par semaine consommez-vous du pain blanc (baguette, pain de mie) ?",
+    "Combien de fois par semaine mangez-vous des féculents (pâtes, riz, pomme de terre,...) ?",
+    "Combien de fois par semaine mangez-vous des crudites ou des fruits ?",
+    "Combien de fois par semaine mangez-vous des légumes cuits ?",
+    "Combien de fois par semaine mangez-vous des oléagineux (noisettes, amandes, noix de cajou, etc.) ?",
+    "Combien de fois mangez-vous de la viande rouge ou porcine par semaine ?",
+    "Combien de fois mangez-vous de la volaille par semaine (poulet, dinde,...) ?",
+    "Combien de fois mangez-vous du poisson par semaine ?",
+    "Combien de fois mangez-vous des œufs par semaine ?",
+    "Combien de fois par semaine consommez-vous des légumineuses (lentilles, pois, haricots blancs,...) ?",
+    "Combien de fois par semaine consommez-vous des pâtisseries (gâteaux, sucreries, barres chocolatées,...) ?",
+    "Combien de fois par semaine consommez-vous des viennoiseries (croissants, pains au chocolat,...) ?",
+    "Combien de fois mangez-vous des plats cuisinés par semaine ?",
+    "Combien de fois êtes-vous exposé(e) à plus de 30 min en continu à l'extérieur ?"
+  ],
+  'Boissons': [
+    "Quelle quantité de verres d'eau buvez-vous en moyenne par jour ?",
+    "Quelle quantité de tasses de café buvez-vous en moyenne par jour ?",
+    "Quelle quantité de tasses de thé buvez-vous en moyenne par jour ?",
+    "Quelle quantité de jus de fruits buvez-vous en moyenne par jour ?",
+    "Quelle quantité de verres de soda buvez-vous en moyenne par jour ?",
+    "Quelle quantité de verres d'alcool buvez-vous en moyenne par jour ?"
+  ]
+};
 
-    <div class="card">
-      <label for="email">Votre email :</label>
-      <input type="email" id="email" name="email" required>
-      <button type="submit">Envoyer mes réponses</button>
-    </div>
-  </form>
+// Génération du formulaire
+const form = document.getElementById('dietForm');
+const container = document.getElementById('categories');
 
-  <script>
-    const categoriesData = {
-      'Alimentation': [
-        "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
-        "Combien de fois utilisez-vous de l'huile d'olive ?",
-        "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?",
-        "Combien de fois par semaine consommez-vous du lait de vache ?",
-        "Combien de fois par semaine consommez-vous du pain blanc (baguette, pain de mie) ?",
-        "Combien de fois par semaine mangez-vous des féculents (pâtes, riz, pomme de terre,...) ?",
-        "Combien de fois par semaine mangez-vous des crudites ou des fruits ?",
-        "Combien de fois par semaine mangez-vous des légumes cuits ?",
-        "Combien de fois par semaine mangez-vous des oléagineux (noisettes, amandes, noix de cajou, etc.) ?",
-        "Combien de fois mangez-vous de la viande rouge ou porcine par semaine ?",
-        "Combien de fois mangez-vous de la volaille par semaine (poulet, dinde,...) ?",
-        "Combien de fois mangez-vous du poisson par semaine ?",
-        "Combien de fois mangez-vous des œufs par semaine ?",
-        "Combien de fois par semaine consommez-vous des légumineuses (lentilles, pois, haricots blancs,...) ?",
-        "Combien de fois par semaine consommez-vous des pâtisseries (gâteaux, sucreries, barres chocolatées,...) ?",
-        "Combien de fois par semaine consommez-vous des viennoiseries (croissants, pains au chocolat,...) ?",
-        "Combien de fois mangez-vous des plats cuisinés par semaine ?",
-        "Combien de fois êtes-vous exposé(e) à plus de 30 min en continu à l'extérieur ?"
-      ],
-      'Boissons': [
-        "Quelle quantité de verres d'eau buvez-vous en moyenne par jour ?",
-        "Quelle quantité de tasses de café buvez-vous en moyenne par jour ?",
-        "Quelle quantité de tasses de thé buvez-vous en moyenne par jour ?",
-        "Quelle quantité de jus de fruits buvez-vous en moyenne par jour ?",
-        "Quelle quantité de verres de soda buvez-vous en moyenne par jour ?",
-        "Quelle quantité de verres d'alcool buvez-vous en moyenne par jour ?"
-      ]
-    };
+Object.keys(categoriesData).forEach(cat => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  let html = `<fieldset><legend>${cat}</legend>`;
+  categoriesData[cat].forEach((q, index) => {
+    const id = `${cat}-${index}`;
+    html += `<label>${q}
+      <select name="${id}" data-category="${cat}" data-question="${q}">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </label>`;
+  });
+  html += `</fieldset>`;
+  card.innerHTML = html;
+  container.appendChild(card);
+});
 
-    const form = document.getElementById('dietForm');
-    const container = document.getElementById('categories');
-    const questionMap = {};
+form.addEventListener('change', updateForm);
 
-    Object.keys(categoriesData).forEach(cat => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      let html = `<fieldset><legend>${cat}</legend>`;
-      categoriesData[cat].forEach((q, index) => {
-        const id = `${cat}-${index}`;
-        questionMap[q] = id;
-        html += `<label>${q}
-          <select name="${id}" data-category="${cat}" data-question="${q}">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </label>`;
-      });
-      html += `</fieldset>`;
-      card.innerHTML = html;
-      container.appendChild(card);
-    });
+function updateForm() {
+  const selects = form.querySelectorAll('select');
+  let total = 0;
+  let answered = 0;
+  selects.forEach(sel => {
+    total += parseInt(sel.value);
+    if (sel.value !== "0") answered++;
+  });
+  document.getElementById('scoreTotal').textContent = total;
+  const percentage = Math.round((answered / selects.length) * 100);
+  document.getElementById('progressBar').style.width = percentage + '%';
+  document.getElementById('progressText').textContent = percentage + '% complété';
+  updateCarences();
+}
 
-    form.addEventListener('change', updateForm);
-    function updateForm() {
-      const selects = form.querySelectorAll('select');
-      let total = 0;
-      let answered = 0;
+// Règles exactes
+const reglesCarences = [
+  { selectName: "Alimentation-0", valeursDeclenchantes: [0], message: "Carence en EPA/DHA" },
+  { selectName: "Alimentation-17", valeursDeclenchantes: [0, 1, 2], message: "Carence en Vit D" },
+  { selectName: "Alimentation-6", valeursDeclenchantes: [0, 1], message: "Carence en Manganèse et Vitamines" },
+  { selectName: "Alimentation-8", valeursDeclenchantes: [0, 1], message: "Carence possible en Magnésium" },
+  { selectName: "Alimentation-7", valeursDeclenchantes: [0, 1], message: "Carence possible en Anti-oxydant" }
+];
+
+function updateCarences() {
+  const carenceDiv = document.getElementById('carencesDetectees');
+  let carenceTrouvee = null;
+
+  for (const regle of reglesCarences) {
+    const select = document.querySelector(`select[name="${regle.selectName}"]`);
+    if (select) {
+      const valeur = parseInt(select.value);
+      if (regle.valeursDeclenchantes.includes(valeur)) {
+        carenceTrouvee = regle.message;
+        break;
+      }
+    }
+  }
+
+  if (carenceTrouvee) {
+    carenceDiv.innerHTML = `<h3>Carence détectée :</h3><ul><li>${carenceTrouvee}</li></ul>`;
+  } else {
+    carenceDiv.innerHTML = `<h3>Aucune carence détectée</h3>`;
+  }
+}
+
+form.addEventListener('submit', function(event) {
+  let summary = '';
+  Object.keys(categoriesData).forEach(cat => {
+    const selects = form.querySelectorAll(`select[data-category="${cat}"]`);
+    if (selects.length > 0) {
+      summary += `\nCatégorie ${cat} :\n`;
       selects.forEach(sel => {
-        total += parseInt(sel.value);
-        if (sel.value !== "0") answered++;
-      });
-      document.getElementById('scoreTotal').textContent = total;
-      const percentage = Math.round((answered / selects.length) * 100);
-      document.getElementById('progressBar').style.width = percentage + '%';
-      document.getElementById('progressText').textContent = percentage + '% complété';
-      updateCarences();
-    }
-
-    // ✅ Règles corrigées
-    const reglesCarences = [
-      { id: "Alimentation-0", valeursDeclenchantes: [0], message: "Carence en EPA/DHA" },
-      { id: "Alimentation-17", valeursDeclenchantes: [0, 1, 2], message: "Carence en Vit D" },
-      { id: "Alimentation-6", valeursDeclenchantes: [0, 1], message: "Carence en Manganèse et Vitamines" },
-      { id: "Alimentation-8", valeursDeclenchantes: [0, 1], message: "Carence possible en Magnésium" },
-      { id: "Alimentation-7", valeursDeclenchantes: [0, 1], message: "Carence possible en Anti-oxydant" }
-    ];
-
-    function updateCarences() {
-      const carenceDiv = document.getElementById('carencesDetectees');
-      let carenceTrouvee = null;
-
-      for (const regle of reglesCarences) {
-        const select = document.querySelector(`select[name="${regle.id}"]`);
-        if (select) {
-          const valeur = parseInt(select.value);
-          if (regle.valeursDeclenchantes.includes(valeur)) {
-            carenceTrouvee = regle.message;
-            break;
-          }
-        }
-      }
-
-      if (carenceTrouvee) {
-        carenceDiv.innerHTML = `<h3>Carence détectée :</h3><ul><li>${carenceTrouvee}</li></ul>`;
-      } else {
-        carenceDiv.innerHTML = `<h3>Aucune carence détectée</h3>`;
-      }
-    }
-
-    form.addEventListener('submit', function(event) {
-      let summary = '';
-      Object.keys(categoriesData).forEach(cat => {
-        const selects = form.querySelectorAll(`select[data-category="${cat}"]`);
-        if (selects.length > 0) {
-          summary += `\nCatégorie ${cat} :\n`;
-          selects.forEach(sel => {
-            const label = sel.getAttribute('data-question');
-            if (sel.value !== "0") {
-              summary += `- ${label} (Score: ${sel.value})\n`;
-            }
-          });
+        const label = sel.getAttribute('data-question');
+        if (sel.value !== "0") {
+          summary += `- ${label} (Score: ${sel.value})\n`;
         }
       });
-      const carences = document.getElementById('carencesDetectees').innerText;
-      const scoreTotal = document.getElementById('scoreTotal').textContent;
-      summary += `\nScore total : ${scoreTotal}\n\n${carences}`;
-      document.getElementById('summaryField').value = summary;
-      alert('Merci pour votre envoi !');
-    });
-  </script>
+    }
+  });
+  const carences = document.getElementById('carencesDetectees').innerText;
+  const scoreTotal = document.getElementById('scoreTotal').textContent;
+  summary += `\nScore total : ${scoreTotal}\n\n${carences}`;
+  document.getElementById('summaryField').value = summary;
+  alert('Merci pour votre envoi !');
+});
+</script>
+
 </body>
 </html>
