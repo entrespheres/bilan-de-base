@@ -65,6 +65,7 @@
 </form>
 
 <script>
+// Questions
 const categoriesData = {
   'Alimentation': [
     "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
@@ -96,7 +97,7 @@ const categoriesData = {
   ]
 };
 
-// Génération du formulaire
+// Formulaire dynamique
 const form = document.getElementById('dietForm');
 const container = document.getElementById('categories');
 
@@ -122,6 +123,7 @@ Object.keys(categoriesData).forEach(cat => {
   container.appendChild(card);
 });
 
+// Progression et scores
 form.addEventListener('change', updateForm);
 
 function updateForm() {
@@ -139,7 +141,7 @@ function updateForm() {
   updateCarences();
 }
 
-// Règles exactes
+// Règles de carence exactes
 const reglesCarences = [
   { selectName: "Alimentation-0", valeursDeclenchantes: [0], message: "Carence en EPA/DHA" },
   { selectName: "Alimentation-17", valeursDeclenchantes: [0, 1, 2], message: "Carence en Vit D" },
@@ -148,6 +150,7 @@ const reglesCarences = [
   { selectName: "Alimentation-7", valeursDeclenchantes: [0, 1], message: "Carence possible en Anti-oxydant" }
 ];
 
+// Détection de carence
 function updateCarences() {
   const carenceDiv = document.getElementById('carencesDetectees');
   let carenceTrouvee = null;
@@ -170,6 +173,7 @@ function updateCarences() {
   }
 }
 
+// Résumé avant envoi
 form.addEventListener('submit', function(event) {
   let summary = '';
   Object.keys(categoriesData).forEach(cat => {
