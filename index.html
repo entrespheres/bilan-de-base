@@ -150,24 +150,23 @@ const reglesCarences = [
   { selectName: "Alimentation-7", valeursDeclenchantes: [0, 1], message: "Carence possible en Anti-oxydant" }
 ];
 
-// Détection de carence
+// Détection de carences — ✅ version améliorée
 function updateCarences() {
   const carenceDiv = document.getElementById('carencesDetectees');
-  let carenceTrouvee = null;
+  const messages = [];
 
   for (const regle of reglesCarences) {
     const select = document.querySelector(`select[name="${regle.selectName}"]`);
     if (select) {
       const valeur = parseInt(select.value);
       if (regle.valeursDeclenchantes.includes(valeur)) {
-        carenceTrouvee = regle.message;
-        break;
+        messages.push(regle.message);
       }
     }
   }
 
-  if (carenceTrouvee) {
-    carenceDiv.innerHTML = `<h3>Carence détectée :</h3><ul><li>${carenceTrouvee}</li></ul>`;
+  if (messages.length > 0) {
+    carenceDiv.innerHTML = `<h3>Carence(s) détectée(s) :</h3><ul>${messages.map(msg => `<li>${msg}</li>`).join('')}</ul>`;
   } else {
     carenceDiv.innerHTML = `<h3>Aucune carence détectée</h3>`;
   }
