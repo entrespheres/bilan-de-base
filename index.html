@@ -146,44 +146,6 @@ function updateForm() {
   updateCarences();
 }
 
-// Mise à jour des règles de carences avec les bons index
-const reglesCarences = [
-  { selectName: "Alimentation-11", valeursDeclenchantes: [0], message: "Carence en EPA/DHA" },
-  { selectName: "Alimentation-17", valeursDeclenchantes: [0, 1, 2], message: "Carence en Vit D" },
-  { selectName: "Alimentation-6", valeursDeclenchantes: [0, 1], message: "Carence en Manganèse et Vitamines" },
-  { selectName: "Alimentation-7", valeursDeclenchantes: [0, 1], message: "Carence possible en Magnésium" },
-  { selectName: "Alimentation-5", valeursDeclenchantes: [0, 1], message: "Carence possible en Anti-oxydants" }
-];
-
-function updateCarences() {
-  const carenceDiv = document.getElementById('carencesDetectees');
-  const messages = [];
-
-  for (const regle of reglesCarences) {
-    const select = document.querySelector(`select[name="${regle.selectName}"]`);
-    if (select && select.value !== "") {
-      const valeur = parseInt(select.value);
-      if (!isNaN(valeur) && regle.valeursDeclenchantes.includes(valeur)) {
-        messages.push("⚠️ " + regle.message);
-      }
-    }
-  }
-
-  if (messages.length > 0) {
-    carenceDiv.innerHTML = `
-      <h3 style="color: #b71c1c;">Carence(s) détectée(s) :</h3>
-      <ul style="color: #b71c1c; font-weight: bold;">
-        ${messages.map(msg => `<li>${msg}</li>`).join('')}
-      </ul>
-    `;
-    carenceDiv.style.borderLeft = "6px solid #e53935";
-    carenceDiv.style.backgroundColor = "#ffebee";
-  } else {
-    carenceDiv.innerHTML = `<h3 style="color: #2e7d32;">✅ Aucune carence détectée</h3>`;
-    carenceDiv.style.borderLeft = "6px solid #43a047";
-    carenceDiv.style.backgroundColor = "#e8f5e9";
-  }
-}
 
 // Résumé avant envoi
 form.addEventListener('submit', function(event) {
