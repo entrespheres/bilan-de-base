@@ -1,223 +1,46 @@
+import { Questionnaire } from '@/components/Questionnaire';
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Questionnaire Alimentation Complémentaire</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; background-color: #d0f0fd; }
-    .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; border-left: 6px solid #00acc1; }
-    .progress-container { width: 100%; background: #e0f2f1; border-radius: 10px; overflow: hidden; margin-bottom: 20px; height: 20px; }
-    .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #00acc1, #00796b); transition: width 0.4s ease; }
-    .progress-text { text-align: center; font-weight: bold; margin-bottom: 20px; color: #006064; }
-    h1 { color: #006064; text-align: center; margin-bottom: 10px; }
-    p.instructions { text-align: center; font-size: 0.95em; color: #333; margin-bottom: 30px; }
-    legend { color: #00796b; font-size: 1.2em; margin-bottom: 10px; }
-    label { display: block; margin-bottom: 8px; color: #555; }
-    .score { margin-top: 10px; font-weight: bold; color: #007BFF; }
-    button { padding: 10px 20px; background-color: #00796b; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; display: block; margin: 20px auto; }
-    button:hover { background-color: #004d40; }
-    input[type="email"] { padding: 8px; width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 8px; margin-top: 10px; }
-    ul { padding-left: 20px; }
-    li { margin-bottom: 8px; }
-    @media (max-width: 600px) {
-      body { margin: 10px; font-size: 16px; }
-      .card { padding: 15px; border-left: 4px solid #00acc1; }
-      h1 { font-size: 1.6em; }
-      legend { font-size: 1.2em; }
-      label { font-size: 1em; }
-      select, input[type="email"] { width: 100%; font-size: 16px; padding: 12px; margin-top: 8px; }
-      button { width: 100%; font-size: 18px; padding: 14px; }
-      .progress-container { height: 18px; }
-      .progress-text { font-size: 1em; margin-bottom: 15px; }
-    }
-  </style>
-</head>
+const Index = () => {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-wellness-green-light/30">
+      {/* Header */}
+      <header className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-wellness-amber/5" />
+        <div className="container py-12 md:py-16 relative">
+          <div className="text-center max-w-2xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-6 animate-fade-in">
+              <span>🌿</span>
+              <span>Bilan Nutritionnel</span>
+            </div>
+            
+            <h1 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-4 animate-slide-up">
+              Questionnaire
+              <span className="block text-primary mt-1">Alimentation Complémentaire</span>
+            </h1>
+            
+            <p className="text-lg text-muted-foreground animate-slide-up" style={{ animationDelay: '100ms' }}>
+              Évaluez vos habitudes alimentaires et identifiez les points d'amélioration 
+              pour une meilleure santé au quotidien.
+            </p>
+          </div>
+        </div>
+      </header>
 
-<body>
+      {/* Main content */}
+      <main className="container pb-16">
+        <Questionnaire />
+      </main>
 
-<h1>Questionnaire Alimentation Complémentaire</h1>
-<p class="instructions">
-  <strong>Instructions :</strong><br>
-  0 = jamais<br>1 = 1 fois par semaine<br>2 = 2 fois par semaine<br>3 = 3 fois par semaine<br>4 = plus de 4 fois par semaine<br>5 = presque à chaque repas
-</p>
-
-<div class="progress-container">
-  <div class="progress-bar" id="progressBar"></div>
-</div>
-<div class="progress-text" id="progressText">0% complété</div>
-
-<form id="dietForm" action="https://formspree.io/f/xblolblj" method="POST">
-  <input type="hidden" name="Résumé" id="summaryField">
-  <div id="categories"></div>
-<div class="card">
-  <label for="complements">Prenez-vous des compléments alimentaires ? Si oui, lesquels :</label>
-  <input type="text" id="complements" name="complements" placeholder="Ex : Magnésium, Oméga 3...">
-
-  <label for="medicaments">Prenez-vous des médicaments ? Si oui, lesquels :</label>
-  <input type="text" id="medicaments" name="medicaments" placeholder="Ex : Ibuprofène, Levothyrox...">
-</div>
-  <div class="card">
-    <div class="score">Score Total : <span id="scoreTotal">0</span></div>
-  </div>
-
-  <div class="card" id="carencesDetectees"></div>
-
-  <div class="card">
-    <label for="email">Votre email :</label>
-    <input type="email" id="email" name="email" required>
-    <button type="submit">Envoyer mes réponses</button>
-  </div>
-</form>
-
-<script>
-// Questions
-const categoriesData = {
-  'Alimentation': [
-    "Combien de fois utilisez-vous de l'huile d'olive ?",
-    "Combien de fois utilisez-vous de l'huile de Colza, Lin, Noix par semaine ?",
-    "Combien de fois par semaine consommez-vous du lait de vache ?",
-    "Combien de fois par semaine consommez-vous du pain blanc (baguette, pain de mie) ?",
-    "Combien de fois par semaine mangez-vous des féculents (pâtes, riz, pomme de terre,...) ?",
-    "Combien de fois par semaine mangez-vous des crudites ou des fruits ?",
-    "Combien de fois par semaine mangez-vous des légumes cuits ?",
-    "Combien de fois par semaine mangez-vous des oléagineux (noisettes, amandes, noix de cajou, etc.) ?",
-    "Combien de fois mangez-vous de la viande rouge ou porcine par semaine ?",
-    "Combien de fois mangez-vous de la volaille par semaine (poulet, dinde,...) ?",
-    "Combien de fois mangez-vous du poisson par semaine ?",
-    "Est-ce que vous consommez des poissons gras (maquereau, sardines, saumon) ?",
-    "Combien de fois mangez-vous des œufs par semaine ?",
-    "Combien de fois par semaine consommez-vous des légumineuses (lentilles, pois, haricots blancs,...) ?",
-    "Combien de fois par semaine consommez-vous des pâtisseries (gâteaux, sucreries, barres chocolatées,...) ?",
-    "Combien de fois par semaine consommez-vous des viennoiseries (croissants, pains au chocolat,...) ?",
-    "Combien de fois mangez-vous des plats cuisinés par semaine ?",
-    "Combien de fois êtes-vous exposé(e) à plus de 30 min en continu à l'extérieur ?"
-  ],
-  'Troubles': [
-    "Je me sens fatigué(e)",
-    "Problèmes de sommeil",
-    "Je me sens anxieux(se)",
-    "Je me sens déprimé(e)",
-    "Je me sens irritable",
-    "J'ai des brûlures d'estomac",
-    "J'ai des reflux acides",
-    "J'ai des nausées",
-    "J'ai des diarrhées ou constipations",
-    "Avez vous des ballonements après les repas ?",
-    "Avez vous régulièrement des pets très odorants?",
-    "Avez vous des maux de ventre?"
-  ]
+      {/* Footer */}
+      <footer className="border-t border-border/50 bg-card/50">
+        <div className="container py-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Entre Sphères • Questionnaire Bilan de Base
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
 };
 
-// Formulaire dynamique
-const form = document.getElementById('dietForm');
-const container = document.getElementById('categories');
-
-Object.keys(categoriesData).forEach(cat => {
-  const card = document.createElement('div');
-  card.className = 'card';
-  let html = `<fieldset><legend>${cat}</legend>`;
-  categoriesData[cat].forEach((q, index) => {
-    const id = `${cat}-${index}`;
-    html += `<label>${q}
-      <select name="${id}" data-category="${cat}" data-question="${q}">
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-    </label>`;
-  });
-  html += `</fieldset>`;
-  card.innerHTML = html;
-  container.appendChild(card);
-});
-
-// Progression et score
-form.addEventListener('change', updateForm);
-
-function updateForm() {
-  const selects = form.querySelectorAll('select');
-  let total = 0;
-  let answered = 0;
-  selects.forEach(sel => {
-    total += parseInt(sel.value);
-    if (sel.value !== "0") answered++;
-  });
-  document.getElementById('scoreTotal').textContent = total;
-  const percentage = Math.round((answered / selects.length) * 100);
-  document.getElementById('progressBar').style.width = percentage + '%';
-  document.getElementById('progressText').textContent = percentage + '% complété';
-  updateCarences();
-}
-
-// Règles de carence
-const reglesCarences = [
-  { selectName: "Alimentation-11", valeursDeclenchantes: [0], message: "Carence en EPA/DHA" },
-  { selectName: "Alimentation-17", valeursDeclenchantes: [0, 1, 2], message: "Carence en Vit D" },
-  { selectName: "Alimentation-6", valeursDeclenchantes: [0, 1], message: "Carence en Manganèse et Vitamines" },
-  { selectName: "Alimentation-8", valeursDeclenchantes: [0, 1], message: "Carence possible en Magnésium" },
-  { selectName: "Alimentation-7", valeursDeclenchantes: [0, 1], message: "Carence possible en Anti-oxydant" }
-];
-
-function updateCarences() {
-  const carenceDiv = document.getElementById('carencesDetectees');
-  const messages = [];
-
-  for (const regle of reglesCarences) {
-    const select = document.querySelector(`select[name="${regle.selectName}"]`);
-    if (select) {
-      const valeur = parseInt(select.value);
-      if (regle.valeursDeclenchantes.includes(valeur)) {
-        messages.push(regle.message);
-      }
-    }
-  }
-
-  if (messages.length > 0) {
-    carenceDiv.innerHTML = `<h3>Carence(s) détectée(s) :</h3><ul>${messages.map(msg => `<li>${msg}</li>`).join('')}</ul>`;
-  } else {
-    carenceDiv.innerHTML = `<h3>Aucune carence détectée</h3>`;
-  }
-}
-
-// Résumé enrichi
-form.addEventListener('submit', function(event) {
-  let summary = '';
-  let addedCarenceInline = false;
-
-  Object.keys(categoriesData).forEach(cat => {
-    const selects = form.querySelectorAll(`select[data-category="${cat}"]`);
-    if (selects.length > 0) {
-      summary += `\nCatégorie ${cat} :\n`;
-      selects.forEach(sel => {
-        const label = sel.getAttribute('data-question');
-        const score = parseInt(sel.value);
-        if (sel.value !== "0") {
-          summary += `- ${label} (Score: ${sel.value})\n`;
-        }
-
-        if (label.trim().toLowerCase() === "avez vous des maux de ventre?" && !addedCarenceInline) {
-          const cruditesSelect = form.querySelector('select[data-question="Combien de fois par semaine mangez-vous des crudites ou des fruits ?"]');
-          if (cruditesSelect && ["0", "1", "2"].includes(cruditesSelect.value)) {
-            summary += `  ➜ carences en Manganèse et Vitamines\n`;
-            addedCarenceInline = true;
-          }
-        }
-      });
-    }
-  });
-
-  const carences = document.getElementById('carencesDetectees').innerText;
-  const scoreTotal = document.getElementById('scoreTotal').textContent;
-  summary += `\nScore total : ${scoreTotal}\n\n${carences}`;
-  document.getElementById('summaryField').value = summary;
-  alert('Merci pour votre envoi !');
-});
-</script>
-
-</body>
-</html>
+export default Index;
